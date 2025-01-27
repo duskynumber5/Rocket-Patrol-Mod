@@ -22,6 +22,7 @@ class Menu extends Phaser.Scene {
     }
 
     create() {
+
         // animation configuration
         this.anims.create({
             key: 'explode',
@@ -39,6 +40,22 @@ class Menu extends Phaser.Scene {
             fixedWidth: 0
         }
 
+        // initalizing high score bank
+        game.EZscoreBank = game.EZcarryover
+        game.HRDscoreBank = game.HRDcarryover
+
+        // high score banking
+        if (game.EZscoreBank > 0) {
+            game.EZhighScore = game.EZscoreBank
+        } else {
+            game.EZhighScore = 0
+        }
+        if (game.HRDscoreBank > 0) {
+            game.HRDhighScore = game.HRDscoreBank
+        } else {
+            game.HRDhighScore = 0
+        }
+
         // display menu text
         this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, 'ROCKET PATROL', menuConfig).setOrigin(0.5)
         this.add.text(game.config.width/2, game.config.height/2, 'Use ←→ arrows to move & (F) to fire', menuConfig).setOrigin(0.5)
@@ -46,9 +63,16 @@ class Menu extends Phaser.Scene {
         menuConfig.color = '#000'
         this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Press ← for Novice or → for Expert', menuConfig).setOrigin(0.5)
 
+        // display high score
+        this.highScore = this.add.text(game.config.width / 4, borderUISize + borderPadding * 1.5, "Novice High Score: " + game.EZhighScore, menuConfig)
+        this.highScore = this.add.text(game.config.width / 4, borderUISize + borderPadding * 6, "Expert High Score: " + game.HRDhighScore, menuConfig)
+
         // define keys
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
-        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)   
+        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT) 
+
+        game.easy = false
+        game.hard = false
     }
 
     update() {
@@ -56,19 +80,21 @@ class Menu extends Phaser.Scene {
             // easy mode
             game.settings = {
                 spaceshipSpeed: 3,
-                gameTimer: 60000
+                gameTimer: 10000,
             }
             this.sound.play('sfx-select')
             this.scene.start('playScene')
+            game.easy = true
         }
         if (Phaser.Input.Keyboard.JustDown(keyRIGHT)) {
             // hard mode
             game.settings = {
                 spaceshipSpeed: 4,
-                gameTimer: 45000
+                gameTimer: 45000,
             }
             this.sound.play('sfx-select')
             this.scene.start('playScene')
+            game.hard = true
         }
     }
 }

@@ -32,7 +32,20 @@ class Play extends Phaser.Scene {
         // initalize score
         this.p1Score = 0
 
-        // display score
+        // initalize high score for EZ
+        if (game.hard == false && game.easy == true && game.EZscoreBank > 0) {
+            this.highScore = game.EZscoreBank
+        } else {
+            this.highScore = 0          // default to 0
+        }
+        // initalize high score for HRD
+        if (game.hard == true && game.easy == false && game.HRDscoreBank > 0) {
+            this.highScore = game.HRDscoreBank
+        } else {
+            this.highScore = 0         // default to 0
+        }
+
+        // display score and timer
         let scoreConfig = {
             fontFamily: 'Courier',
             fontSize: '28px', 
@@ -46,25 +59,92 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         }
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.p1Score, scoreConfig)
+        this.timeRight = this.add.text(game.config.width - borderUISize * 4.12 - borderPadding, borderUISize + borderPadding * 2, game.settings.gameTimer/1000, scoreConfig)
+        
+        // display high score and fire
+        let fireConfig = {
+            fontFamily: 'Courier',
+            fontSize: '16px', 
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'right',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+        }
+
+        if (game.hard == false && game.easy == true) {
+            this.topScore = this.add.text(game.config.width / 2.5, borderUISize + borderPadding * 1.5, "High Score: " + this.highScore, fireConfig)
+        } 
+        if (game.hard == true && game.easy == false) {
+//            console.log('hard score posted')
+            this.topScore = this.add.text(game.config.width / 2.5, borderUISize + borderPadding * 1.5, "High Score: " + this.highScore, fireConfig)
+        }
+        
+        game.fire = this.add.text(game.config.width / 2.15, borderUISize + borderPadding * 4.25, "FIRE", fireConfig)
+        game.fire.visible = false;
+
+        // update timer
+        game.timeRemaining = game.settings.gameTimer/1000
+        let timer = this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+//                console.log("Timer tick")
+                game.timeRemaining--
+                this.timeRight.setText(game.timeRemaining)
+
+                if(game.timeRemaining <= 0) {
+                    this.time.removeEvent(timer)
+                    this.timeRight.text = 0
+                    // game over scene
+                    if (!this.gameOver) {
+                        scoreConfig.fixedWidth = 0
+                        this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5)
+                        this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig).setOrigin(0.5) 
+                        this.gameOver = true
+                    }
+                }
+            },
+            callbackScope: this,
+            loop: true
+        })
+
+        // 30 second timer
+        scoreConfig.fixedWidth = 0
+        this.clock = this.time.delayedCall(30000, () => {
+            game.settings.spaceshipSpeed += 2
+        }, null, this)
 
         // GAME OVER flag
-        this.gameOver = false
-
-        // 60-second play clock
-        scoreConfig.fixedWidth = 0
-        this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5)
-            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig).setOrigin(0.5)
-            this.gameOver = true
-        }, null, this)  
+        this.gameOver = false 
     }
 
     update() {
+        // update high score
+        if(this.highScore < this.p1Score) {
+            this.highScore = this.p1Score
+            this.topScore.text = "High Score: " + this.highScore
+        }
+
         // check key input for restart or menu
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyRESET)) {
+            if (game.hard == false && game.easy == true) {
+                game.EZscoreBank = this.highScore
+            }
+            if (game.hard == true && game.easy == false) {
+                game.HRDscoreBank = this.highScore
+            }
             this.scene.restart()
         }
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
+            if (game.hard == false && game.easy == true) {
+                game.EZcarryover = this.highScore
+            }
+            if (game.hard == true && game.easy == false) {
+                game.HRDcarryover = this.highScore
+            }
+            game.firstRound = false
             this.scene.start("menuScene")
         }
 
@@ -80,15 +160,15 @@ class Play extends Phaser.Scene {
         if(this.checkCollision(this.p1Rocket, this.ship03)) {
             this.p1Rocket.reset()
             this.shipExplode(this.ship03)
-        }
+        } 
         if(this.checkCollision(this.p1Rocket, this.ship02)) {
             this.p1Rocket.reset()
             this.shipExplode(this.ship02)
-        }
+        } 
         if(this.checkCollision(this.p1Rocket, this.ship01)) {
             this.p1Rocket.reset()
             this.shipExplode(this.ship01)
-        }
+        } 
     }
 
     checkCollision(rocket, ship) {
@@ -114,9 +194,11 @@ class Play extends Phaser.Scene {
             ship.alpha = 1                      // make ship visible again
             boom.destroy()                      // remove explosion sprite
         })
-        // score add and text update
+        // score add and time/text update
         this.p1Score += ship.points
         this.scoreLeft.text = this.p1Score
+        game.timeRemaining += 2                 // increase time when a ship is hit
+//        console.log("more time!")
 
         this.sound.play('sfx-explosion')
     }

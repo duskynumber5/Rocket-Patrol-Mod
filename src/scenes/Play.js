@@ -32,18 +32,18 @@ class Play extends Phaser.Scene {
         // initalize score
         this.p1Score = 0
 
+        // default to 0
+        this.highScore = 0    
+
         // initalize high score for EZ
         if (game.hard == false && game.easy == true && game.EZscoreBank > 0) {
             this.highScore = game.EZscoreBank
-        } else {
-            this.highScore = 0          // default to 0
-        }
+
+        } 
         // initalize high score for HRD
         if (game.hard == true && game.easy == false && game.HRDscoreBank > 0) {
             this.highScore = game.HRDscoreBank
-        } else {
-            this.highScore = 0         // default to 0
-        }
+        } 
 
         // display score and timer
         let scoreConfig = {

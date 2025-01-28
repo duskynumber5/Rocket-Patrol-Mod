@@ -1,6 +1,6 @@
 // Maddison Lobo
 // Rocket Patrol: The Rocket Strikes Back
-// 9 hours
+// 13 hours
 
 // the mods you chose, their point values, and if necessary, an explanation of their implementation
     // ! Implement a new timing/scoring mechanism that adds time to the clock for successful hits and subtracts time for misses (5)

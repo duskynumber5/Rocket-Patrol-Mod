@@ -1,11 +1,11 @@
 // Maddison Lobo
-// Rocket Patrol 2: Double Trouble
-// 5 hours
+// Rocket Patrol: The Rocket Strikes Back
+// 9 hours
 
 // the mods you chose, their point values, and if necessary, an explanation of their implementation
     // ! Implement a new timing/scoring mechanism that adds time to the clock for successful hits and subtracts time for misses (5)
-    // Implement an alternating two-player mode (5)
-    // Create a new title screen (e.g., new artwork, typography, layout) (3)
+    // ! Use Phaser's particle emitter to create a particle explosion when the rocket hits the spaceship (5)
+    // ! Create a new title screen (e.g., new artwork, typography, layout) (3)
     // ! Display the time remaining (in seconds) on the screen (3)
     // ! Allow the player to control the Rocket after it's fired (1)
     // ! Implement the speed increase that happens after 30 seconds in the original game (1)

@@ -67,22 +67,22 @@ class Play extends Phaser.Scene {
             fontSize: '16px', 
             backgroundColor: '#F3B141',
             color: '#843605',
-            align: 'right',
+            align: 'center',
             padding: {
-                top: 5,
-                bottom: 5,
+                top: 3,
+                bottom: 3,
             },
         }
 
         if (game.hard == false && game.easy == true) {
-            this.topScore = this.add.text(game.config.width / 2.5, borderUISize + borderPadding * 1.5, "High Score: " + this.highScore, fireConfig)
+            this.topScore = this.add.text(game.config.width / 2.5, borderUISize + borderPadding * 2, "High Score: " + this.highScore, fireConfig)
         } 
         if (game.hard == true && game.easy == false) {
 //            console.log('hard score posted')
-            this.topScore = this.add.text(game.config.width / 2.5, borderUISize + borderPadding * 1.5, "High Score: " + this.highScore, fireConfig)
+            this.topScore = this.add.text(game.config.width / 2, borderUISize + borderPadding * 2, "High Score: " + this.highScore, fireConfig)
         }
         
-        game.fire = this.add.text(game.config.width / 2.15, borderUISize + borderPadding * 4.25, "FIRE", fireConfig)
+        game.fire = this.add.text(game.config.width / 2.15, borderUISize + borderPadding * 4.5, "FIRE", fireConfig)
         game.fire.visible = false;
 
         // update timer
@@ -186,13 +186,21 @@ class Play extends Phaser.Scene {
     shipExplode(ship) {
         // temp hide ship
         ship.alpha = 0
+
         // create explosion sprite at ship's position
-        let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0,0);
+        let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0,0)
         boom.anims.play('explode')              // play explode animation
+        const emitter = this.add.particles(ship.x, ship.y + 15, 'rocket', {
+            speed: 200,
+            lifespan: 1000,
+            quantity: 5,
+            alpha: { start: 1, end: 0 }
+        })
         boom.on('animationcomplete', () => {    // callback after anim completes
             ship.reset()                        // reset ship position
             ship.alpha = 1                      // make ship visible again
-            boom.destroy()                      // remove explosion sprite
+            boom.destroy()                      // remove explosion sprit
+            emitter.destroy()
         })
         // score add and time/text update
         this.p1Score += ship.points

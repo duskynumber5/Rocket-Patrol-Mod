@@ -62,9 +62,9 @@ class Play extends Phaser.Scene {
         this.timeRight = this.add.text(game.config.width - borderUISize * 4.12 - borderPadding, borderUISize + borderPadding * 2, game.settings.gameTimer/1000, scoreConfig)
         
         // display high score and fire
-        let fireConfig = {
-            fontFamily: 'Courier',
-            fontSize: '16px', 
+        let highScoreConfig = {
+            fontFamily: 'Gill Sans',
+            fontSize: '20px', 
             backgroundColor: '#F3B141',
             color: '#843605',
             align: 'center',
@@ -72,17 +72,45 @@ class Play extends Phaser.Scene {
                 top: 3,
                 bottom: 3,
             },
+            fixedWidth: 150
+        }
+
+        let fireConfig = {
+            fontFamily: 'Gill Sans',
+            fontSize: '30px', 
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'center',
+            padding: {
+                top: 3,
+                bottom: 3,
+            },
+            fixedWidth: 100
+        }
+
+        // game over font
+        let gameOverConfig = {
+            fontFamily: 'Gill Sans',
+            fontSize: '24px', 
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'center',
+            padding: {
+                top: 3,
+                bottom: 3,
+            },
+            fixedWidth: game.config.width - borderPadding * 6
         }
 
         if (game.hard == false && game.easy == true) {
-            this.topScore = this.add.text(game.config.width / 2.5, borderUISize + borderPadding * 2, "High Score: " + this.highScore, fireConfig)
+            this.topScore = this.add.text(game.config.width / 3.6, borderUISize + borderPadding * 2.5, "High Score: " + this.highScore, highScoreConfig)
         } 
         if (game.hard == true && game.easy == false) {
 //            console.log('hard score posted')
-            this.topScore = this.add.text(game.config.width / 2, borderUISize + borderPadding * 2, "High Score: " + this.highScore, fireConfig)
+            this.topScore = this.add.text(game.config.width / 3.6, borderUISize + borderPadding * 2.5, "High Score: " + this.highScore, highScoreConfig)
         }
         
-        game.fire = this.add.text(game.config.width / 2.15, borderUISize + borderPadding * 4.5, "FIRE", fireConfig)
+        game.fire = this.add.text(game.config.width / 2 + borderPadding * 4, borderUISize + borderPadding * 2, "FIRE", fireConfig)
         game.fire.visible = false;
 
         // update timer
@@ -100,8 +128,8 @@ class Play extends Phaser.Scene {
                     // game over scene
                     if (!this.gameOver) {
                         scoreConfig.fixedWidth = 0
-                        this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5)
-                        this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig).setOrigin(0.5) 
+                        this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', gameOverConfig).setOrigin(0.5)
+                        this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu', gameOverConfig).setOrigin(0.5) 
                         this.gameOver = true
                     }
                 }
